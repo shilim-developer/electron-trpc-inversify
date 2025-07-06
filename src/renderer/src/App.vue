@@ -1,21 +1,31 @@
 <script setup lang="ts">
 import Versions from './components/Versions.vue'
 import { trpcClient } from './trpc/trpc-client'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+const list = ref<Awaited<ReturnType<typeof trpcClient.trpc.trpcQueryList.query>>>([])
 
-async function trpcQueryTest() {
-  const result = await trpcClient.trpc.queryTest.query({ text: 'hello world' })
-  alert('trpcQueryTest: ' + result.text)
+async function trpcQueryList() {
+  list.value = await trpcClient.trpc.trpcQueryList.query()
+}
+
+async function trpcMutationTest() {
+  await trpcClient.trpc.trpcMutationList.mutate({ id: 1, name: 'hello' + Date.now() })
+  trpcQueryList()
+}
+
+async function trpcSubscribeTest() {
+  await trpcClient.trpc.subscribeSendTest.mutate({ id: 1, value: 'value' + Date.now() })
+  trpcQueryList()
 }
 
 onMounted(() => {
-  trpcClient.trpc.subscribeTest.subscribe(undefined, {
-    onData(value) {
-      console.log(value)
+  const sub = trpcClient.trpc.subscribeTest.subscribe(undefined, {
+    onData: async () => {
+      trpcQueryList()
     }
   })
+  sub.unsubscribe()
 })
 </script>
 
@@ -29,13 +39,42 @@ onMounted(() => {
     <span class="ts">TypeScript</span>
   </div>
   <p class="tip">Please try pressing <code>F12</code> to open the devTool</p>
+  <table class="table" border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(item, index) in list" :key="index">
+        <td>{{ item.name }}</td>
+        <td>{{ item.value }}</td>
+      </tr>
+    </tbody>
+  </table>
   <div class="actions">
     <div class="action">
-      <a @click="trpcQueryTest"> trpcQueryTest </a>
+      <a @click="trpcQueryList"> trpcQueryList (Get List) </a>
     </div>
     <div class="action">
-      <a target="_blank" rel="noreferrer" @click="ipcHandle">Send IPC</a>
+      <a @click="trpcMutationTest"> trpcMutationTest (Update Name)</a>
+    </div>
+    <div class="action">
+      <a @click="trpcSubscribeTest"> trpcSubscribeTest (Update Value) </a>
     </div>
   </div>
   <Versions />
 </template>
+
+<style scoped>
+.table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  td,
+  th {
+    padding: 6px 10px;
+  }
+}
+</style>

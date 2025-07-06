@@ -11,21 +11,40 @@ export default class TrpcRouter {
   create() {
     return createRouter({
       trpc: {
-        queryTest: publicProcedure
-          .input(
-            z.object({
-              text: z.string()
-            })
+        trpcQueryList: publicProcedure
+          .output(
+            z.array(
+              z.object({
+                id: z.number(),
+                name: z.string(),
+                value: z.string()
+              })
+            )
           )
-          .query(({ input }) => {
+          .query(() => {
             try {
-              ee.emit('subscribeTest', input)
-              return this.trpcService.queryTest(input)
+              return this.trpcService.trpcQueryList()
             } catch (error) {
               throw new TRPCError({
                 code: 'INTERNAL_SERVER_ERROR',
                 cause: error
               })
+            }
+          }),
+        trpcMutationList: publicProcedure
+          .input(
+            z.object({
+              id: z.number(),
+              name: z.string()
+            })
+          )
+          .output(z.boolean())
+          .mutation(({ input }) => {
+            try {
+              return this.trpcService.trpcMutationList(input)
+            } catch (error) {
+              console.log('error:', error)
+              return false
             }
           }),
         subscribeTest: publicProcedure
@@ -42,6 +61,17 @@ export default class TrpcRouter {
             })) {
               yield data
             }
+          }),
+        subscribeSendTest: publicProcedure
+          .input(
+            z.object({
+              id: z.number(),
+              value: z.string()
+            })
+          )
+          .mutation(({ input }) => {
+            this.trpcService.trpcSubscribeSend(input)
+            ee.emit('subscribeTest', input)
           })
       }
     })
