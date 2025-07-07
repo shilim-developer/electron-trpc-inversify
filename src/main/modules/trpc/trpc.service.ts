@@ -1,5 +1,7 @@
 import { injectable } from 'inversify'
 import { ListItemDto } from './models/list-item.dto'
+import { TrpcMutationListInputType } from './models/trpc-mutation-list'
+import { SubscribeSendInputType } from './models/subscribe-send-test'
 
 @injectable()
 export default class TrpcService {
@@ -14,13 +16,13 @@ export default class TrpcService {
     return this.list
   }
 
-  trpcMutationList(input: Omit<ListItemDto, 'value'>): boolean {
+  trpcMutationList(input: TrpcMutationListInputType): boolean {
     const index = this.list.findIndex((item) => item.id === input.id)
     this.list[index].name = input.name
     return true
   }
 
-  trpcSubscribeSend(input: Omit<ListItemDto, 'name'>): boolean {
+  trpcSubscribeSend(input: SubscribeSendInputType): boolean {
     const index = this.list.findIndex((item) => item.id === input.id)
     this.list[index].value = input.value
     return true
