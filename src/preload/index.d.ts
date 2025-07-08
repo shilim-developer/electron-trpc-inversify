@@ -5,4 +5,5 @@ declare global {
     electron: ElectronAPI
     api: unknown
   }
+  type AppRouter = import('@main/modules/app/app.router').AppRouter
 }
