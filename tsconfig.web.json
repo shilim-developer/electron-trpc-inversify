@@ -5,6 +5,7 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.vue",
     "src/preload/*.d.ts",
+    "src/main/modules/app.router.ts"
   ],
   "compilerOptions": {
     "composite": true,
@@ -13,6 +14,9 @@
       "@renderer/*": [
         "src/renderer/src/*"
       ],
+      "@main/*": [
+        "src/main/*"
+      ]
     }
   }
 }

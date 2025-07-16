@@ -1,30 +1,25 @@
+import { initTRPC } from '@trpc/server'
+import EventEmitter from 'events'
 import { injectable } from 'inversify'
-import { ListItemDto } from './models/list-item.dto'
-import { TrpcMutationListInputType } from './models/trpc-mutation-list'
-import { SubscribeSendInputType } from './models/subscribe-send-test'
+import { ZodError } from 'zod'
 
 @injectable()
 export default class TrpcService {
-  list = [
-    {
-      id: 1,
-      name: 'hello',
-      value: 'word'
-    }
-  ]
-  trpcQueryList(): ListItemDto[] {
-    return this.list
-  }
-
-  trpcMutationList(input: TrpcMutationListInputType): boolean {
-    const index = this.list.findIndex((item) => item.id === input.id)
-    this.list[index].name = input.name
-    return true
-  }
-
-  trpcSubscribeSend(input: SubscribeSendInputType): boolean {
-    const index = this.list.findIndex((item) => item.id === input.id)
-    this.list[index].value = input.value
-    return true
-  }
+  trpc = initTRPC.context().create({
+    errorFormatter: ({ shape, error }) => ({
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null
+      }
+    })
+  })
+  createCallerFactory = this.trpc.createCallerFactory
+  createRouter = this.trpc.router
+  publicProcedure = this.trpc.procedure
+  protectedProcedure = this.trpc.procedure.use(({ next }) => {
+    return next()
+  })
+  mergeRouters = this.trpc.mergeRouters
+  ee = new EventEmitter()
 }

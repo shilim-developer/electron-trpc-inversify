@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { mergeRouters } from '../../trpc/trpc'
 import WindowRouter from '../window/window.router'
-import TrpcRouter from '../trpc/trpc.router'
+import TrpcRouter from '../example/example.router'
 
 @injectable()
 export default class AppRouterFactory {
