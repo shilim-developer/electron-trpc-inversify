@@ -122,7 +122,7 @@ export default class ExampleRouter {
     }
   }
 
-  create<T extends Pathify<ReturnType<typeof this._router>>>(filters: T[]) {
+  create(filters: T[]) {
     // const a = {
     //   trpc: {
     //     trpcQueryList: publicProcedure
@@ -153,9 +153,10 @@ export default class ExampleRouter {
     //   }
     // }
     // type hllo = Pathify<typeof a>
+    const b: NestedPick<ReturnType<typeof this._router>,T>
+    b.
     return '' as NestedPick<ReturnType<typeof this._router>, T>
     // const t : UnionToIntersection<NestedPick<ReturnType<typeof this._router>, T>>
-    // const b: DeepPickMerge<ReturnType<typeof this._router>, T>
     // return createRouter(
     //   pick(this._router(), filters) as DeepPickMerge<
     //     ReturnType<typeof this._router>,

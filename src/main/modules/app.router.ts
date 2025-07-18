@@ -13,7 +13,10 @@ export default class AppRouterFactory {
   create() {
     return mergeRouters(
       // this.windowRouter.create(),
-      this.trpcRouter.create<'trpc.subscribeSendTest'>(['trpc.subscribeSendTest'])
+      this.trpcRouter.create<'trpc.subscribeSendTest' | 'trpc.subscribeTest'>([
+        'trpc.subscribeSendTest',
+        'trpc.subscribeTest'
+      ])
     )
   }
 }
