@@ -28,7 +28,8 @@
     "electron-updater": "^6.3.9",
     "inversify": "^7.5.4",
     "trpc-electron": "^0.1.2",
-    "zod": "^3.25.67"
+    "zod": "^3.25.67",
+    "es-toolkit": "^1.39.7"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "3.0.0",

@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { inject, injectable } from 'inversify'
 import { createIPCHandler } from 'trpc-electron/main'
-import WindowService from '../window/window.service'
+import WindowService from './window/window.service'
 import AppRouterFactory from './app.router'
 
 @injectable()

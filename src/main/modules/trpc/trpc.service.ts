@@ -1,6 +1,7 @@
 import { initTRPC } from '@trpc/server'
-import EventEmitter from 'events'
+import { pick } from 'es-toolkit'
 import { injectable } from 'inversify'
+import { EventEmitter } from 'node:events'
 import { ZodError } from 'zod'
 
 @injectable()
@@ -22,4 +23,8 @@ export default class TrpcService {
   })
   mergeRouters = this.trpc.mergeRouters
   ee = new EventEmitter()
+
+  filterRoutes(router, filters: string[]) {
+    return pick(router, filters)
+  }
 }
