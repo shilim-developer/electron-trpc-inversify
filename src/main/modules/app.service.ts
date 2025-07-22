@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { inject, injectable } from 'inversify'
 import { createIPCHandler } from 'trpc-electron/main'
@@ -26,9 +26,6 @@ export default class AppService {
       app.on('browser-window-created', (_, window) => {
         optimizer.watchWindowShortcuts(window)
       })
-
-      // IPC test
-      ipcMain.on('ping', () => console.log('pong'))
 
       const mainWindow = this.windowService.createWindow()
       const appRouter = this.appRouterFactory.create()

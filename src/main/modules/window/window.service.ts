@@ -7,6 +7,7 @@ import { injectable } from 'inversify'
 @injectable()
 export default class WindowService {
   mainWindow!: BrowserWindow
+  subWindow!: BrowserWindow
 
   createWindow(): BrowserWindow {
     this.mainWindow = new BrowserWindow({
@@ -39,5 +40,11 @@ export default class WindowService {
       this.mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
     }
     return this.mainWindow
+  }
+
+  createSubWindow(): BrowserWindow {
+    const win = this.createWindow()
+    win.webContents.openDevTools()
+    return win
   }
 }

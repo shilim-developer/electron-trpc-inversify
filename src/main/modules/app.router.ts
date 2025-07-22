@@ -1,22 +1,19 @@
 import { inject, injectable } from 'inversify'
 import { mergeRouters } from '../trpc/trpc'
 import WindowRouter from './window/window.router'
-import TrpcRouter from './example/example.router'
+import ExampleRouter from './example/example.router'
 
 @injectable()
 export default class AppRouterFactory {
   constructor(
     @inject(WindowRouter) private windowRouter: WindowRouter,
-    @inject(TrpcRouter) private trpcRouter: TrpcRouter
+    @inject(ExampleRouter) private exampleRouter: ExampleRouter
   ) {}
 
   create() {
     return mergeRouters(
       // this.windowRouter.create(),
-      this.trpcRouter.create<'trpc.subscribeSendTest' | 'trpc.subscribeTest'>([
-        'trpc.subscribeSendTest',
-        'trpc.subscribeTest'
-      ])
+      this.exampleRouter.allRouter()
     )
   }
 }

@@ -1,55 +1,39 @@
-import { injectable } from 'inversify'
-import { createRouter, publicProcedure } from '../../trpc/trpc'
-import z from 'zod'
-import { TRPCError } from '@trpc/server'
+import { inject, injectable } from 'inversify'
+import { pick } from 'es-toolkit/compat'
+import type { RouterFilterTypes, PickMultiplePaths } from '../../trpc/trpc-types'
+import TrpcService from '../trpc/trpc.service'
+import WindowService from './window.service'
 
 @injectable()
 export default class WindowRouter {
-  getRouter() {
+  constructor(
+    @inject(TrpcService) private readonly trpcService: TrpcService,
+    @inject(WindowService) private readonly windowService: WindowService
+  ) {}
+
+  private _router() {
+    const { publicProcedure } = this.trpcService
     return {
       window: {
-        hello: publicProcedure
-          .input(
-            z.object({
-              name: z.string().optional()
-            })
-          )
-          .query(({ input }) => {
-            try {
-              const { name } = input
-              return name
-            } catch (error) {
-              throw new TRPCError({
-                code: 'INTERNAL_SERVER_ERROR',
-                cause: error
-              })
-            }
-          })
+        openSubWindow: publicProcedure.mutation(() => {
+          this.windowService.createSubWindow()
+        })
       }
     }
   }
 
-  create() {
-    return createRouter({
-      window: {
-        hello: publicProcedure
-          .input(
-            z.object({
-              name: z.string().optional()
-            })
-          )
-          .query(({ input }) => {
-            try {
-              const { name } = input
-              return name
-            } catch (error) {
-              throw new TRPCError({
-                code: 'INTERNAL_SERVER_ERROR',
-                cause: error
-              })
-            }
-          })
-      }
-    })
+  allRouter() {
+    const { createRouter } = this.trpcService
+    return createRouter(this._router())
+  }
+
+  filterRouter<T extends RouterFilterTypes<typeof this._router>[]>(filters: T) {
+    const { createRouter } = this.trpcService
+    return createRouter(
+      pick(this._router(), filters) as PickMultiplePaths<
+        ReturnType<typeof this._router>,
+        typeof filters
+      >
+    )
   }
 }
