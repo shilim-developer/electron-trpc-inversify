@@ -11,10 +11,7 @@ export default class AppRouterFactory {
   ) {}
 
   create() {
-    return mergeRouters(
-      // this.windowRouter.create(),
-      this.exampleRouter.allRouter()
-    )
+    return mergeRouters(this.windowRouter.allRouter(), this.exampleRouter.allRouter())
   }
 }
 
