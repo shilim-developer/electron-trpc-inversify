@@ -11,10 +11,14 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
+    "types": [
+      "electron-vite/node"
+    ],
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
       ],
+      "@main/modules/app.router": ["src/main/modules/app.router"],
     }
   }
 }
